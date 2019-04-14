@@ -12,10 +12,14 @@ def handler(event, context):
     # Get message ID from event to name execution
     # TODO: Handle case of no message ID, don't use static value in it's place
     # as execution name must be unique, this may stop further executions
-    message_id = event.get('MessageId')
+    # TODO: Possibility of multiple records? Try setting in topic subscription
+    # that sends only message body and not metadata?
+    message_id = event['Records'][0]['Sns']['MessageId']
 
     # Get message body from event to hand to state machine input
-    message_body = event.get('Message', '{}')
+    # TODO: Possibility of multiple records? Try setting in topic subscription
+    # that sends only message body and not metadata?
+    message_body = event['Records'][0]['Sns']['Message']
 
     client = boto3.client('stepfunctions')
     response = client.start_execution(

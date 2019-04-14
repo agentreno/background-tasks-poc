@@ -15,6 +15,21 @@ resource "aws_sns_topic_subscription" "lambda_processor_sub" {
 FILTER
 }
 
+# TODO: Setup roles with perms to Cloudwatch for topic debugging (delivery
+# status logging)
+
+resource "aws_sns_topic_subscription" "step_function_trigger_sub" {
+    topic_arn = "${aws_sns_topic.background_task_events.arn}"
+    protocol = "lambda"
+    endpoint = "${aws_lambda_function.step_function_trigger.arn}"
+
+    filter_policy = <<FILTER
+{
+    "event": ["task_for_step_function"]
+}
+FILTER
+}
+
 # Lambda setup
 resource "aws_iam_role" "lambda_processor" {
     name = "background_task_lambda_processor"
@@ -36,7 +51,7 @@ resource "aws_iam_role" "lambda_processor" {
 EOF
 }
 
-resource "aws_lambda_permission" "allow_sns" {
+resource "aws_lambda_permission" "allow_sns_lambda_processor_invoke" {
     statement_id = "AllowExecutionFromSNS"
     action = "lambda:invokeFunction"
     function_name = "${aws_lambda_function.lambda_processor.function_name}"
@@ -91,6 +106,14 @@ resource "aws_iam_role_policy" "step_function_trigger_policy" {
     name = "background_tasks_step_function_trigger_policy"
     role = "${aws_iam_role.step_function_trigger.id}"
     policy = "${data.template_file.step_function_trigger_policy.rendered}"
+}
+
+resource "aws_lambda_permission" "allow_sns_step_function_trigger_invoke" {
+    statement_id = "AllowExecutionFromSNS"
+    action = "lambda:invokeFunction"
+    function_name = "${aws_lambda_function.step_function_trigger.function_name}"
+    principal = "sns.amazonaws.com"
+    source_arn = "${aws_sns_topic.background_task_events.arn}"
 }
 
 resource "aws_lambda_function" "step_function_trigger" {
