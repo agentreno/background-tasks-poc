@@ -1,3 +1,5 @@
+variable "region" {}
+
 # IAM policies and roles
 resource "aws_iam_role_policy" "apigateway" {
     name = "StepFunctionsAPI"
@@ -93,10 +95,10 @@ resource "aws_api_gateway_deployment" "main" {
     # get deployed, this unused variable forces this resource to be updated 
     # when any change has been made to API gateway configuration
     variables {
-        code_hash = "${md5(file("apigateway.tf"))}"
+        code_hash = "${md5(file("api_gateway/api_gateway.tf"))}"
     }
 }
 
-output "apigateway_url" {
+output "api_gateway_url" {
     value = "${aws_api_gateway_deployment.main.invoke_url}"
 }

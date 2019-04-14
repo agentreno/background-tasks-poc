@@ -100,3 +100,14 @@ resource "aws_lambda_function" "step_function_trigger" {
     handler = "main.handler"
     runtime = "python3.7"
 }
+
+module "api_gateway" {
+	source = "./api_gateway"
+	region = "${var.region}"
+}
+
+module "step_functions" {
+	source = "./step_functions"
+	api_gateway_url = "${module.api_gateway.api_gateway_url}"
+	region = "${var.region}"
+}

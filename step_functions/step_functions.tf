@@ -1,3 +1,6 @@
+variable "api_gateway_url" {}
+variable "region" {}
+
 resource "aws_sfn_activity" "manual_step" {
 	name = "ManualStep"
 }
@@ -8,6 +11,13 @@ resource "aws_lambda_function" "manual_step_worker" {
 	role = "${aws_iam_role.manual_step_worker.arn}"
 	handler = "index.handler"
 	runtime = "nodejs8.10"
+
+	environment {
+		variables {
+			activityArn = "${aws_sfn_activity.manual_step.id}"
+			apiGatewayUrl = "${var.api_gateway_url}"
+		}
+	}
 }
 
 resource "aws_iam_role" "manual_step_worker" {

@@ -6,7 +6,7 @@ const ses = new aws.SES();
 exports.handler = (event, context, callback) => {
     
     var taskParams = {
-        activityArn: 'arn:aws:states:eu-west-1:461321663140:activity:ManualStep'
+        activityArn: process.env.activityArn
     };
     
     stepfunctions.getActivityTask(taskParams, function(err, data) {
@@ -36,9 +36,9 @@ exports.handler = (event, context, callback) => {
                                 Data: 'Hi!<br />' +
                                     input.employeeName + ' has been nominated for promotion!<br />' +
                                     'Can you please approve:<br />' +
-                                    'https://4zhrw6ka52.execute-api.eu-west-1.amazonaws.com/respond/success?taskToken=' + encodeURIComponent(data.taskToken) + '<br />' +
+                                    process.env.apiGatewayUrl + '/success?taskToken=' + encodeURIComponent(data.taskToken) + '<br />' +
                                     'Or reject:<br />' +
-                                    'https://4zhrw6ka52.execute-api.eu-west-1.amazonaws.com/respond/fail?taskToken=' + encodeURIComponent(data.taskToken),
+                                    process.env.apiGatewayUrl + '/fail?taskToken=' + encodeURIComponent(data.taskToken),
                                 Charset: 'UTF-8'
                             }
                         }
