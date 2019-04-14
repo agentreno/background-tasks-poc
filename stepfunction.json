@@ -1,0 +1,33 @@
+{
+  "Comment": "Employee promotion process!",
+  "StartAt": "SendEmailAndWait",
+  "States": {
+    "SendEmailAndWait": {
+      "Type": "Parallel",
+      "End": true,
+      "Branches": [
+        {
+          "StartAt": "ManualApproval",
+          "States": {
+            "ManualApproval": {
+              "Type": "Task",
+              "Resource": "${activity_arn}",
+              "TimeoutSeconds": 3600,
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "Approve",
+          "States": {
+            "Approve": {
+              "Type": "Task",
+              "Resource": "${lambda_arn}",
+              "End": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}
