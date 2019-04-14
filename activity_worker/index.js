@@ -19,6 +19,7 @@ exports.handler = (event, context, callback) => {
                 context.succeed('No activities received after 60 seconds.');
             } else {
                 console.log(data);
+                console.log(process.env.apiGatewayUrl + '/succeed?taskToken=' + encodeURIComponent(data.taskToken));
                 var input = JSON.parse(data.input);
                 var emailParams = {
                     Destination: {
@@ -36,7 +37,7 @@ exports.handler = (event, context, callback) => {
                                 Data: 'Hi!<br />' +
                                     input.employeeName + ' has been nominated for promotion!<br />' +
                                     'Can you please approve:<br />' +
-                                    process.env.apiGatewayUrl + '/success?taskToken=' + encodeURIComponent(data.taskToken) + '<br />' +
+                                    process.env.apiGatewayUrl + '/succeed?taskToken=' + encodeURIComponent(data.taskToken) + '<br />' +
                                     'Or reject:<br />' +
                                     process.env.apiGatewayUrl + '/fail?taskToken=' + encodeURIComponent(data.taskToken),
                                 Charset: 'UTF-8'
@@ -48,7 +49,7 @@ exports.handler = (event, context, callback) => {
                             input.managerEmailAddress
                         ]
                 };
-                    
+                /*    
                 ses.sendEmail(emailParams, function (err, data) {
                     if (err) {
                         console.log(err, err.stack);
@@ -57,7 +58,8 @@ exports.handler = (event, context, callback) => {
                         console.log(data);
                         context.succeed('The email was successfully sent.');
                     }
-                });
+                });*/
+                context.succeed('Skipped email');
             }
         }
     });
