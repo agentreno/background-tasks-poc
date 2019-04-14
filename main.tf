@@ -122,6 +122,12 @@ resource "aws_lambda_function" "step_function_trigger" {
     role = "${aws_iam_role.step_function_trigger.arn}"
     handler = "main.handler"
     runtime = "python3.7"
+	
+	environment {
+		variables {
+			STEP_FUNCTION_ARN = "${module.step_functions.state_machine_arn}"
+		}
+	}
 }
 
 module "api_gateway" {

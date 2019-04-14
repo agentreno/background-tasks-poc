@@ -72,7 +72,7 @@ EOF
 
 # Import state machine from template
 data "template_file" "state_machine_definition" {
-    template = "${file("stepfunction.json")}"
+    template = "${file("step_functions/state_machine.json")}"
 
     vars {
 		"activity_arn" = "${aws_sfn_activity.manual_step.id}"
@@ -128,7 +128,7 @@ resource "aws_sfn_state_machine" "state_machine" {
     definition = "${data.template_file.state_machine_definition.rendered}"
 }
 
-output "state_function_arn" {
+output "state_machine_arn" {
     value = "${aws_sfn_state_machine.state_machine.id}"
 }
 
