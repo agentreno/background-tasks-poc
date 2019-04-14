@@ -4,7 +4,7 @@ resource "aws_sfn_activity" "manual_step" {
 
 resource "aws_lambda_function" "manual_step_worker" {
 	function_name = "ManualStepActivityWorker"
-	filename = "activity_worker.py"
+	filename = "activity_worker/activity_worker.zip"
 	role = "${aws_iam_role.manual_step_worker.arn}"
 	handler = "index.handler"
 	runtime = "nodejs8.10"
