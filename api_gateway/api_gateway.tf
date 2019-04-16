@@ -58,7 +58,51 @@ resource "aws_api_gateway_method" "succeed" {
     request_parameters = {
         "method.request.querystring.taskToken" = true
     }
+    request_validator_id = "${aws_api_gateway_request_validator.succeed.id}"
     authorization = "NONE"
+}
+
+resource "aws_api_gateway_request_validator" "succeed" {
+    name = "Validate querystring params"
+    rest_api_id = "${aws_api_gateway_rest_api.rest_api.id}"
+    validate_request_parameters = true
+}
+
+resource "aws_api_gateway_method_response" "200" {
+    rest_api_id = "${aws_api_gateway_rest_api.rest_api.id}"
+    resource_id = "${aws_api_gateway_resource.succeed.id}"
+    http_method = "GET"
+    status_code = "200"
+}
+
+resource "aws_api_gateway_method_response" "400" {
+    rest_api_id = "${aws_api_gateway_rest_api.rest_api.id}"
+    resource_id = "${aws_api_gateway_resource.succeed.id}"
+    http_method = "GET"
+    status_code = "400"
+}
+
+resource "aws_api_gateway_integration_response" "success" {
+    rest_api_id = "${aws_api_gateway_rest_api.rest_api.id}"
+    resource_id = "${aws_api_gateway_resource.succeed.id}"
+    http_method = "GET"
+    selection_pattern = "200"
+    status_code = "200"
+}
+
+resource "aws_api_gateway_integration_response" "error" {
+    rest_api_id = "${aws_api_gateway_rest_api.rest_api.id}"
+    resource_id = "${aws_api_gateway_resource.succeed.id}"
+    http_method = "GET"
+    selection_pattern = "4\\d{2}"
+    status_code = "400"
+    response_templates {
+        "application/json" = <<EOF
+{
+    "error": "Invalid task token"
+}
+EOF
+    }
 }
 
 resource "aws_api_gateway_integration" "stepfunction" {

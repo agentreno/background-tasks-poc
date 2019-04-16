@@ -49,7 +49,7 @@ exports.handler = (event, context, callback) => {
                             input.managerEmailAddress
                         ]
                 };
-                /*    
+                 
                 ses.sendEmail(emailParams, function (err, data) {
                     if (err) {
                         console.log(err, err.stack);
@@ -58,8 +58,8 @@ exports.handler = (event, context, callback) => {
                         console.log(data);
                         context.succeed('The email was successfully sent.');
                     }
-                });*/
-                context.succeed('Skipped email');
+                });
+                //context.succeed('Skipped email');
             }
         }
     });
